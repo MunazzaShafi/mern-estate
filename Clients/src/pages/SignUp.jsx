@@ -1,19 +1,58 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+// import OAuth from '../components/OAuth';
 
 export default function SignUp() {
+  const [formData, setFormData] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success === false) {
+        setLoading(false);
+        setError(data.message);
+        return;
+      }
+      setLoading(false);
+      setError(null);
+      navigate("/signin");
+    } catch (error) {
+      setLoading(false);
+      setError(error.message);
+    }
+  };
+
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-5 py-10">
-
       <div className="w-full max-w-md">
-
         {/* Heading */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#29483F] mb-4">
+          {/* <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#29483F] mb-4">
             <span className="text-[#E8C98D] text-xl font-bold">
               B
             </span>
-          </div>
+          </div> */}
 
           <h1 className="text-3xl font-bold text-[#29483F]">
             Create your account
@@ -24,15 +63,12 @@ export default function SignUp() {
           </p>
         </div>
 
-
         {/* Form Card */}
         <div className="bg-white border border-[#DED8CA] rounded-2xl p-7 shadow-sm">
-
           <form
-            // onSubmit={handleSubmit}
+            onSubmit={handleSubmit}
             className="flex flex-col gap-5"
           >
-
             {/* Username */}
             <div>
               <label
@@ -51,16 +87,15 @@ export default function SignUp() {
                            focus:border-[#52796F] focus:ring-1
                            focus:ring-[#52796F] transition"
                 id="username"
-                // onChange={handleChange}
+                onChange={handleChange}
               />
             </div>
-
 
             {/* Email */}
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-[#29483F] mb-2"
+                className="block text-sm font-medium text-[#29483F] mb-2" 
               >
                 Email
               </label>
@@ -74,10 +109,9 @@ export default function SignUp() {
                            focus:border-[#52796F] focus:ring-1
                            focus:ring-[#52796F] transition"
                 id="email"
-                // onChange={handleChange}
+                onChange={handleChange}
               />
             </div>
-
 
             {/* Password */}
             <div>
@@ -97,46 +131,38 @@ export default function SignUp() {
                            focus:border-[#52796F] focus:ring-1
                            focus:ring-[#52796F] transition"
                 id="password"
-                // onChange={handleChange}
+                onChange={handleChange}
               />
             </div>
 
-
             {/* Button */}
             <button
-              // disabled={loading}
+              disabled={loading}
               className="w-full bg-[#29483F] text-white p-3 rounded-xl
                          font-medium text-sm uppercase tracking-wide
                          hover:bg-[#203A33] transition
                          disabled:opacity-80 mt-1"
             >
-              Sign Up
+              {loading ? "Loading..." : "Sign Up"}
             </button>
-
           </form>
-
 
           {/* Sign In */}
           <div className="flex justify-center gap-2 mt-6 text-sm">
-            <p className="text-[#7B817C]">
-              Already have an account?
-            </p>
+            <p className="text-[#7B817C]">Already have an account?</p>
 
-            <Link to="/sign-in">
-              <span className="text-[#A67C3D] font-medium hover:underline">
+            <Link to="/signin">
+              <span className="text-[#df271a] font-medium hover:underline">
                 Sign in
               </span>
             </Link>
           </div>
-
         </div>
 
-        {/* Bottom text */}
-        <p className="text-center text-xs text-[#9A9387] mt-5">
-          Find your place. Make it yours.
-        </p>
-
+        
+        {error && <p className='text-red-500 mt-5'>{error}</p>}
       </div>
     </div>
+    
   );
 }

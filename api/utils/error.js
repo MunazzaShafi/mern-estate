@@ -4,3 +4,5 @@ error.statusCode = statusCode;
 error.message = message;
 return error;
 }
+
+module.exports = errorhandler;

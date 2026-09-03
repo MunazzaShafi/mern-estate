@@ -1,79 +1,105 @@
-import { FaSearch } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
-// import { useEffect, useState } from 'react';
+import { FaSearch, FaArrowRight } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export default function Header() {
-  // const { currentUser } = useSelector((state) => state.user);
-  // const [searchTerm, setSearchTerm] = useState('');
-  // const navigate = useNavigate();
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   const urlParams = new URLSearchParams(window.location.search);
-  //   urlParams.set('searchTerm', searchTerm);
-  //   const searchQuery = urlParams.toString();
-  //   navigate(`/search?${searchQuery}`);
-  // };
-
-  // useEffect(() => {
-  //   const urlParams = new URLSearchParams(location.search);
-  //   const searchTermFromUrl = urlParams.get('searchTerm');
-  //   if (searchTermFromUrl) {
-  //     setSearchTerm(searchTermFromUrl);
-  //   }
-  // }, [location.search]);
   return (
-    <header className='bg-slate-200 shadow-md'>
-      <div className='flex justify-between items-center max-w-6xl mx-auto p-3'>
-        <Link to='/'>
-          <h1 className='font-bold text-sm sm:text-xl flex flex-wrap'>
-            <span className='text-red-500'>Bella</span>
-            <span className='text-slate-700'>Estate</span>
-          </h1>
-        </Link>
-        <form
-          // onSubmit={handleSubmit}
-          className='bg-slate-100 p-3 rounded-lg flex items-center'
-        >
-          <input
-            type='text'
-            placeholder='Search...'
-            className='bg-transparent focus:outline-none w-24 sm:w-64'
-            // value={searchTerm}
-            // onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button>
-            <FaSearch className='text-slate-600' />
-          </button>
-        </form>
-        <ul className='flex gap-4'>
-          <Link to='/'>
-            <li className='hidden sm:inline text-slate-700 hover:underline'>
+    <header className="bg-[#F8F1E8] border-b border-[#DED8CA]">
+      <div className="max-w-7xl mx-auto px-5 py-4">
+
+        <div className="flex items-center justify-between gap-6">
+
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#29483F] flex items-center justify-center">
+              <span className="text-[#E8C98D] font-bold text-lg">
+                B
+              </span>
+            </div>
+
+            <div>
+              <h1 className="text-xl font-bold text-[#29483F] leading-none">
+                BellaEstate
+              </h1>
+
+              <p className="text-[9px] tracking-[3px] text-[#8A806F] mt-1">
+                FIND YOUR PLACE
+              </p>
+            </div>
+          </Link>
+
+
+          {/* Search Bar */}
+          <form className="hidden md:flex items-center bg-white border border-[#DDD6C8]
+                            rounded-xl px-4 py-2.5 w-64 lg:w-80 xl:w-96
+                            shadow-sm focus-within:border-[#29483F] transition">
+
+            <FaSearch
+              className="text-[#8A806F] mr-3"
+              size={14}
+            />
+
+            <input
+              type="text"
+              placeholder="Search properties..."
+              className="w-full bg-transparent outline-none text-sm text-[#29483F]
+                         placeholder:text-[#A39B8D]"
+            />
+
+          </form>
+
+
+          {/* Right Navigation */}
+          <nav className="flex items-center gap-5 lg:gap-7 shrink-0">
+
+            <Link
+              to="/"
+              className="hidden sm:block text-sm font-medium text-[#29483F]
+                         hover:text-[#A67C3D] transition"
+            >
               Home
-            </li>
-          </Link>
-          <Link to='/about'>
-            <li className='hidden sm:inline text-slate-700 hover:underline '>
+            </Link>
+
+            <Link
+              to="/about"
+              className="hidden sm:block text-sm font-medium text-[#6D756F]
+                         hover:text-[#A67C3D] transition"
+            >
               About
-            </li>
-          </Link>
-          <Link to='/signup'>
-            <li className='hidden sm:inline text-slate-700 hover:underline '>
-              Sign Up
-            </li>
-          </Link>
-          {/* <Link to='/profile'>
-            {currentUser ? (
-              <img
-                className='rounded-full h-7 w-7 object-cover'
-                src={currentUser.avatar}
-                alt='profile'
-              />
-            ) : (
-              <li className=' text-slate-700 hover:underline'> Sign in</li>
-            )}
-          </Link> */}
-        </ul>
+            </Link>
+
+            <Link
+              to="/sign-in"
+              className="flex items-center gap-2 bg-[#29483F] text-white
+                         px-4 lg:px-5 py-2.5 rounded-xl text-sm font-medium
+                         hover:bg-[#203A33] transition"
+            >
+              Sign In
+              <FaArrowRight size={10} />
+            </Link>
+
+          </nav>
+
+        </div>
+
+
+        {/* Mobile Search */}
+        <form className="flex md:hidden items-center bg-white border border-[#DDD6C8]
+                          rounded-xl px-4 py-2.5 mt-4">
+
+          <FaSearch
+            className="text-[#8A806F] mr-3"
+            size={14}
+          />
+
+          <input
+            type="text"
+            placeholder="Search properties..."
+            className="w-full bg-transparent outline-none text-sm
+                       text-[#29483F] placeholder:text-[#A39B8D]"
+          />
+
+        </form>
+
       </div>
     </header>
   );

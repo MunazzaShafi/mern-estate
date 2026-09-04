@@ -68,7 +68,7 @@ export default function Header() {
             </Link>
 
             <Link
-              to="/sign-in"
+              to="/signin"
               className="flex items-center gap-2 bg-[#29483F] text-white
                          px-4 lg:px-5 py-2.5 rounded-xl text-sm font-medium
                          hover:bg-[#203A33] transition"

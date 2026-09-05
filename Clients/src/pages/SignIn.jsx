@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch , useSelector } from 'react-redux';
 import { signInStart, signInSuccess, signInFailure } from '../redux/users/userSlice.js';
-// import OAuth from '../components/OAuth';
+import OAuth from '../Components/OAuth.jsx';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
@@ -125,6 +125,7 @@ const { error, loading } = useSelector((state) => state.user);
             >
               {loading ? "Loading..." : "Sign In"}
             </button>
+            <OAuth/>
           </form>
 
           {/* Sign In */}

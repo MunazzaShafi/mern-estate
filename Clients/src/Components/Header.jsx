@@ -1,7 +1,10 @@
 import { FaSearch, FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import {useSelector} from "react-redux";
 
 export default function Header() {
+  const { currentUser } = useSelector((state) => state.user);
+ 
   return (
     <header className="bg-[#F8F1E8] border-b border-[#DED8CA]">
       <div className="max-w-7xl mx-auto px-5 py-4">
@@ -68,13 +71,24 @@ export default function Header() {
             </Link>
 
             <Link
-              to="/signin"
-              className="flex items-center gap-2 bg-[#29483F] text-white
+              to="/signin">
+             
+
+              {currentUser ? (
+                <img
+                  src={currentUser.avatar}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                 <div className="flex items-center gap-2 bg-[#29483F] text-white
                          px-4 lg:px-5 py-2.5 rounded-xl text-sm font-medium
-                         hover:bg-[#203A33] transition"
-            >
+                         hover:bg-[#203A33] transition">
+            
               Sign In
               <FaArrowRight size={10} />
+              </div>
+              )}
             </Link>
 
           </nav>

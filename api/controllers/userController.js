@@ -1,6 +1,7 @@
 const bcryptjs =require('bcryptjs');
 const User =require('../models/userModel.js');
 const errorHandler =require('../utils/error.js');
+const Listing =require ('../models/listingModel.js')
 
 const test=(req,res)=>{
     //  res.json({"message": "User Route is working"})
@@ -64,5 +65,31 @@ const updateUser = async (req, res, next) => {
     next(error);
   }
 };
+ const getUserListings = async (req, res, next) => {
+  if (req.user.id !== req.params.id) {
+    return next(errorHandler(401, 'You can only view your own listings!'));
+  }
+  try {
+    const listings = await Listing.find({ userRef: req.params.id.toString() });
+    res.status(200).json(listings);
+  } catch (error) {
+    next(error);
+  }
+};
 
-module.exports={test, updateUser,deleteUser};
+ const getUser = async (req, res, next) => {
+  try {
+    
+    const user = await User.findById(req.params.id);
+  
+    if (!user) return next(errorHandler(404, 'User not found!'));
+  
+    const { password: pass, ...rest } = user._doc;
+  
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports={test, updateUser,deleteUser,getUserListings,getUser};

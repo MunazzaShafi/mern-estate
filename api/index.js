@@ -20,7 +20,7 @@ mongoose.connect(process.env.MONGO_URI).then(()=>{
 
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
-app.use("/api/listing", listingRoute);
+app.use("/api/listings", listingRoute);
 
  app.listen(3000 ,()=>{
     console.log("Server is running on port :3000")

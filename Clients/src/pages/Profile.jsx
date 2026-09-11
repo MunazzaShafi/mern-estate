@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-
 import {
   updateUserStart,
   updateUserSuccess,
@@ -11,23 +10,19 @@ import {
   deleteUserSuccess,
   signOutUserStart,
 } from '../redux/users/userSlice.js';
-
 import CloudinaryUpload from '../Components/CloudinaryUpload.jsx';
 
 export default function Profile() {
-  const { currentUser, loading, error } = useSelector(
-    (state) => state.user
-  );
-
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-  username: currentUser.username,
-  email: currentUser.email,
-  avatar: currentUser.avatar,
-});
+    username: currentUser.username,
+    email: currentUser.email,
+    avatar: currentUser.avatar,
+  });
   const [updateSuccess, setUpdateSuccess] = useState(false);
-   const [showListingsError, setShowListingsError] = useState(false);
+  const [showListingsError, setShowListingsError] = useState(false);
   const [userListings, setUserListings] = useState([]);
 
   const handleChange = (e) => {
@@ -38,50 +33,39 @@ export default function Profile() {
   };
 
   const handleImageUpload = async (imageUrl) => {
-  try {
-    dispatch(updateUserStart());
-
-    const res = await fetch(`/api/users/update/${currentUser._id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/users/update/${currentUser._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          avatar: imageUrl,
+        }),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setFormData((prev) => ({
+        ...prev,
         avatar: imageUrl,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (data.success === false) {
-      dispatch(updateUserFailure(data.message));
-      return;
+      }));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
     }
-
-    // Update Redux immediately
-    dispatch(updateUserSuccess(data));
-
-    // Update Profile image immediately
-    setFormData((prev) => ({
-      ...prev,
-      avatar: imageUrl,
-    }));
-
-    setUpdateSuccess(true);
-
-  } catch (error) {
-    dispatch(updateUserFailure(error.message));
-  }
-};
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       setUpdateSuccess(false);
       dispatch(updateUserStart());
-
       const res = await fetch(`/api/users/update/${currentUser._id}`, {
         method: 'POST',
         headers: {
@@ -90,14 +74,11 @@ export default function Profile() {
         credentials: 'include',
         body: JSON.stringify(formData),
       });
-
       const data = await res.json();
-
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
         return;
       }
-
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
     } catch (error) {
@@ -108,19 +89,15 @@ export default function Profile() {
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart());
-
       const res = await fetch(`/api/users/delete/${currentUser._id}`, {
         method: 'DELETE',
-       credentials: 'include',
+        credentials: 'include',
       });
-
       const data = await res.json();
-
       if (data.success === false) {
         dispatch(deleteUserFailure(data.message));
         return;
       }
-
       dispatch(deleteUserSuccess(data));
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
@@ -130,47 +107,46 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signOutUserStart());
-
       const res = await fetch('/api/auth/signout');
       const data = await res.json();
-
       if (data.success === false) {
         dispatch(deleteUserFailure(data.message));
         return;
       }
-
       dispatch(deleteUserSuccess(data));
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
     }
   };
-   const handleShowListings = async () => {
-    try {
-      setShowListingsError(false);
-      const res = await fetch(`/api/listings/${currentUser._id}`);
-      const data = await res.json();
-      if (data.success === false) {
-        setShowListingsError(true);
-        return;
-      }
 
-      setUserListings(data);
-    } catch (error) {
+  const handleShowListings = async () => {
+  try {
+    setShowListingsError(false);
+    const res = await fetch(`/api/users/listings/${currentUser._id}`, {
+      credentials: 'include', // <--- REQUIRED for verifyToken
+    });
+    const data = await res.json();
+    if (data.success === false) {
       setShowListingsError(true);
+      return;
     }
-  };
+    setUserListings(data);
+  } catch (error) {
+    setShowListingsError(true);
+  }
+};
 
   const handleListingDelete = async (listingId) => {
     try {
-      const res = await fetch(`/api/listing/delete/${listingId}`, {
+      const res = await fetch(`/api/listings/delete/${listingId}`, {
         method: 'DELETE',
+        credentials: 'include', // <--- Add this
       });
       const data = await res.json();
       if (data.success === false) {
         console.log(data.message);
         return;
       }
-
       setUserListings((prev) =>
         prev.filter((listing) => listing._id !== listingId)
       );
@@ -182,22 +158,15 @@ export default function Profile() {
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <div>
-          <p className='text-red-700 mt-5'>
-        {error ? error : ''}
-      </p>
-
-      <p className='text-green-700 mt-5'>
-        {updateSuccess ? 'User is updated successfully!' : ''}
-      </p>
+        <p className='text-red-700 mt-5'>{error ? error : ''}</p>
+        <p className='text-green-700 mt-5'>
+          {updateSuccess ? 'User is updated successfully!' : ''}
+        </p>
       </div>
-      <h1 className='text-3xl font-semibold text-center my-7'>
-        Profile
-      </h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className='flex flex-col gap-4'
-      >
+      <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
+
+      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <img
           src={formData.avatar || currentUser.avatar}
           alt='profile'
@@ -238,7 +207,8 @@ export default function Profile() {
         >
           {loading ? 'Loading...' : 'Update'}
         </button>
-         <Link
+
+        <Link
           className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95'
           to={'/create-listing'}
         >
@@ -253,7 +223,6 @@ export default function Profile() {
         >
           Delete account
         </span>
-
         <span
           onClick={handleSignOut}
           className='text-red-700 cursor-pointer'
@@ -261,13 +230,11 @@ export default function Profile() {
           Sign out
         </span>
       </div>
-     <p className='text-red-700 mt-5'>{error ? error : ''}</p>
-      <p className='text-green-700 mt-5'>
-        {updateSuccess ? 'User is updated successfully!' : ''}
-      </p>
-      <button onClick={handleShowListings} className='text-green-700 w-full'>
+
+      <button onClick={handleShowListings} className='text-green-700 w-full mt-5'>
         Show Listings
       </button>
+
       <p className='text-red-700 mt-5'>
         {showListingsError ? 'Error showing listings' : ''}
       </p>
@@ -282,7 +249,7 @@ export default function Profile() {
               key={listing._id}
               className='border rounded-lg p-3 flex justify-between items-center gap-4'
             >
-              <Link to={`/listing/${listing._id}`}>
+              <Link to={`/listings/${listing._id}`}>
                 <img
                   src={listing.imageUrls[0]}
                   alt='listing cover'
@@ -290,13 +257,13 @@ export default function Profile() {
                 />
               </Link>
               <Link
-                className='text-slate-700 font-semibold  hover:underline truncate flex-1'
-                to={`/create-listing/${listing._id}`}
+                className='text-slate-700 font-semibold hover:underline truncate flex-1'
+                to={`/listings/${listing._id}`}
               >
                 <p>{listing.name}</p>
               </Link>
 
-              <div className='flex flex-col item-center'>
+              <div className='flex flex-col items-center'>
                 <button
                   onClick={() => handleListingDelete(listing._id)}
                   className='text-red-700 uppercase'
@@ -311,7 +278,6 @@ export default function Profile() {
           ))}
         </div>
       )}
-    
     </div>
   );
 }

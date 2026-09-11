@@ -35,7 +35,7 @@ export default function UpdateListing() {
       try {
         const listingId = params.listingId;
 
-        const res = await fetch(`/api/listing/get/${listingId}`);
+        const res = await fetch(`/api/listings/get/${listingId}`);
         const data = await res.json();
 
         if (data.success === false) {
@@ -198,7 +198,7 @@ export default function UpdateListing() {
       setError(false);
 
       const res = await fetch(
-        `/api/listing/update/${params.listingId}`,
+        `/api/listings/update/${params.listingId}`,
         {
           method: 'POST',
           headers: {
@@ -220,7 +220,7 @@ export default function UpdateListing() {
         return;
       }
 
-      navigate(`/listing/${data._id}`);
+      navigate(`/listings/${data._id}`);
     } catch (error) {
       setError(error.message);
       setLoading(false);

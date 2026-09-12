@@ -33,15 +33,15 @@ app.use('/api/users', userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/listings', listingRoute);
 
-// Serve Frontend in Production
-// Check your folder name: change 'client' to 'clients' if your folder is named 'clients'
-const clientPath = path.join(__dirname, 'clients', 'dist');
+// Serve Frontend in Production (Express 5 Compatible)
+const clientDistPath = path.resolve(__dirname, '..', 'clients', 'dist');
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(clientPath));
+  app.use(express.static(clientDistPath));
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(clientPath, 'index.html'));
+  // In Express v5, use '{*splat}' or a catch-all middleware
+  app.get('{*splat}', (req, res) => {
+    res.sendFile(path.join(clientDistPath, 'index.html'));
   });
 }
 

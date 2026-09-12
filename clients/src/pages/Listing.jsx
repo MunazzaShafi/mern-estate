@@ -13,7 +13,7 @@ import {
   FaParking,
   FaShare,
 } from 'react-icons/fa';
-import Contact from '../components/Contact';
+import Contact from '../Components/Contact';
 
 export default function Listing() {
   SwiperCore.use([Navigation]);

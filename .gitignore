@@ -24,8 +24,3 @@ dist-ssr
 *.sw?
 .env
 
-node_modules/
-clients/node_modules/
-dist/
-clients/dist/
-.env

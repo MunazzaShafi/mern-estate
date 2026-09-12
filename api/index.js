@@ -35,7 +35,7 @@ app.use('/api/listings', listingRoute);
 
 // Serve Frontend in Production
 // Check your folder name: change 'client' to 'clients' if your folder is named 'clients'
-const clientPath = path.join(__dirname, 'clients', 'dist');
+const clientPath = path.join(__dirname, 'client', 'dist');
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(clientPath));

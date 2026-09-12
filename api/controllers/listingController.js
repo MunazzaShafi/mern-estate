@@ -1,6 +1,7 @@
 const Listing = require('../models/listingModel.js');
 const errorHandler = require('../utils/error.js');
 
+// Create a new listing
 const createListing = async (req, res, next) => {
   try {
     const listing = await Listing.create(req.body);
@@ -10,90 +11,101 @@ const createListing = async (req, res, next) => {
   }
 };
 
+// Delete a listing by ID
 const deleteListing = async (req, res, next) => {
-  const listing = await Listing.findById(req.params.id);
-
-  if (!listing) {
-    return next(errorHandler(404, 'Listing not found!'));
-  }
-
-  if (req.user.id !== listing.userRef) {
-    return next(errorHandler(401, 'You can only delete your own listings!'));
-  }
-
   try {
+    const listing = await Listing.findById(req.params.id);
+
+    if (!listing) {
+      return next(errorHandler(404, 'Listing not found!'));
+    }
+
+    if (req.user.id !== listing.userRef) {
+      return next(errorHandler(401, 'You can only delete your own listings!'));
+    }
+
     await Listing.findByIdAndDelete(req.params.id);
-    res.status(200).json('Listing has been deleted!');
+    return res.status(200).json('Listing has been deleted!');
   } catch (error) {
     next(error);
   }
 };
 
+// Update a listing by ID
 const updateListing = async (req, res, next) => {
-  const listing = await Listing.findById(req.params.id);
-  if (!listing) {
-    return next(errorHandler(404, 'Listing not found!'));
-  }
-  if (req.user.id !== listing.userRef) {
-    return next(errorHandler(401, 'You can only update your own listings!'));
-  }
-
   try {
+    const listing = await Listing.findById(req.params.id);
+
+    if (!listing) {
+      return next(errorHandler(404, 'Listing not found!'));
+    }
+
+    if (req.user.id !== listing.userRef) {
+      return next(errorHandler(401, 'You can only update your own listings!'));
+    }
+
     const updatedListing = await Listing.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
-    res.status(200).json(updatedListing);
+
+    return res.status(200).json(updatedListing);
   } catch (error) {
     next(error);
   }
 };
 
+// Get a single listing by ID
 const getListing = async (req, res, next) => {
   try {
     const listing = await Listing.findById(req.params.id);
+
     if (!listing) {
       return next(errorHandler(404, 'Listing not found!'));
     }
-    res.status(200).json(listing);
+
+    return res.status(200).json(listing);
   } catch (error) {
     next(error);
   }
 };
 
- const getListings = async (req, res, next) => {
+// Get multiple listings with filtering, sorting, and pagination
+const getListings = async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit) || 9;
-    const startIndex = parseInt(req.query.startIndex) || 0;
-    let offer = req.query.offer;
+    const limit = parseInt(req.query.limit, 10) || 9;
+    const startIndex = parseInt(req.query.startIndex, 10) || 0;
 
+    // Handle boolean & string filter queries
+    let offer = req.query.offer;
     if (offer === undefined || offer === 'false') {
       offer = { $in: [false, true] };
+    } else if (offer === 'true') {
+      offer = true;
     }
 
     let furnished = req.query.furnished;
-
     if (furnished === undefined || furnished === 'false') {
       furnished = { $in: [false, true] };
+    } else if (furnished === 'true') {
+      furnished = true;
     }
 
     let parking = req.query.parking;
-
     if (parking === undefined || parking === 'false') {
       parking = { $in: [false, true] };
+    } else if (parking === 'true') {
+      parking = true;
     }
 
     let type = req.query.type;
-
     if (type === undefined || type === 'all') {
       type = { $in: ['sale', 'rent'] };
     }
 
     const searchTerm = req.query.searchTerm || '';
-
     const sort = req.query.sort || 'createdAt';
-
     const order = req.query.order || 'desc';
 
     const listings = await Listing.find({
@@ -113,4 +125,10 @@ const getListing = async (req, res, next) => {
   }
 };
 
-module.exports = {createListing, deleteListing, updateListing, getListing, getListings};
+module.exports = {
+  createListing,
+  deleteListing,
+  updateListing,
+  getListing,
+  getListings,
+};
